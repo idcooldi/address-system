@@ -1,0 +1,27 @@
+version: '3.1'
+
+services:
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8888:8080
+  db:
+    image: mysql:5.6
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: xml
+  go:
+     image: golang:alpine
+     restart: always
+     container_name: golang
+     tty: true    
+     volumes:
+       - .:/go/src/parseXML
+     working_dir: /go/src/parseXML  
+     command: sh -c "apk add --no-cache git && go get github.com/jinzhu/gorm &&  go get github.com/go-sql-driver/mysql  && go run main.go"
+
+
